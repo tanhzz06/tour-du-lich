@@ -1,43 +1,104 @@
-<?php 
-// Require các file môi trường và hàm hỗ trợ
-require_once './commons/env.php'; 
-require_once './commons/function.php'; 
+<?php
+ob_start();
+?>
 
-// Require Base Controller
-require_once './controllers/Controller.php';
+<div class="row">
+    <div class="col-12">
 
-// Require Controllers
-require_once './controllers/ProductController.php';
-require_once './controllers/AdminController.php';
-require_once './controllers/DiemDanhController.php';
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Danh sách booking</h3>
+            </div>
 
-// Require Models
-require_once './models/ProductModel.php';
-require_once './models/DiemDanhModel.php'; 
+            <div class="card-body">
 
-// Tạo kết nối database để truyền vào Controller
-$db = connectDB();
+                <a href="<?= BASE_URL ?>booking-create" class="btn btn-primary mb-3">
+                    + Thêm booking
+                </a>
 
-// Lấy action từ URL
-$act = $_GET['act'] ?? '/';
 
-// Điều hướng
-match ($act) {
+                <div class="table-responsive">
+           
+                    <br>
+                    <table class="table table-bordered align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Tour</th>
+                                <th>Khách hàng</th>
+                                <th>Hướng dẫn viên</th>
+                                <!-- <th>Ngày bắt đầu</th>
+                                <th>Ngày kết thúc</th> -->
+                                <th>Trạng thái</th>
+                                <th>Ghi chú</th>
+                                <th width="160">Hành động</th>
+                            </tr>
+                        </thead>
 
-    // Trang chủ
-    '/' => (new ProductController($db))->Home(),
+                        <tbody>
+                        <?php foreach ($bookings as $i => $booking): ?>
+                            <tr>
+                                <td><?= $i + 1 ?></td>
 
-    // Tour
-    'tour_management' => (new ProductController($db))->TourManagement(),
-    'tour_add'        => (new ProductController($db))->CreateTour(),
-    'tour_delete'     => (new ProductController($db))->DeleteTour(),
+                                <td><?= htmlspecialchars($booking->tour_name ?? '---') ?></td>
+<td><?= htmlspecialchars($booking->customer_name ?? '---') ?></td>
+<td><?= htmlspecialchars($booking->guide_name ?? '--') ?></td>
 
-    // --- ĐIỂM DANH ---
-    'diemdanh'       => (new DiemDanhController($db))->diemdanh(),
-    'diemdanh_luu'   => (new DiemDanhController($db))->diemdanh_luu(),
-    'danhsach_dd'    => (new DiemDanhController($db))->danhsach(),
-    // -----------------
+                                <!-- <td><?= htmlspecialchars($booking->start_date ?? '---') ?></td>
+                                <td><?= htmlspecialchars($booking->end_date ?? '---') ?></td> -->
+                                <td>
+                                    <?php
+                                    switch ($booking->status) {
+                                        case 0: echo 'Đã đặt'; break;
+                                        case 1: echo 'Đang tiến hành'; break;
+                                        case 2: echo 'Đã hoàn thành'; break;
+                                        case 3: echo 'Đã hủy'; break;
+                                        default: echo '---';
+                                    }
+                                    ?>
+                                </td>
+                                <td><?= htmlspecialchars($booking->notes ?? '') ?></td>
 
-    // Mặc định
-    default => (new ProductController($db))->Home(),
-};
+                                <!-- ACTION -->
+                                <td>
+                                    <a href="<?= BASE_URL ?>booking-edit&id=<?= $booking->id ?>"
+                                       class="btn btn-sm btn-warning">
+                                        Sửa
+                                    </a>
+
+            <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== 'huong_dan_vien'): ?>
+
+                                    <form method="post"
+                                          action="<?= BASE_URL ?>booking-delete"
+                                          style="display:inline-block"
+                                          onsubmit="return confirm('Xóa booking này?')">
+                                        <input type="hidden" name="id" value="<?= $booking->id ?>">
+                                        <button class="btn btn-sm btn-danger">Xóa</button>
+                                    </form>
+<?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<?php
+$content = ob_get_clean();
+
+view('layouts.AdminLayout', [
+    'title' => $title,
+    'pageTitle' => $title,
+    'content' => $content,
+    'breadcrumb' => [
+        ['label' => 'Trang chủ', 'url' => BASE_URL . 'home'],
+        ['label' => 'Booking', 'url' => BASE_URL . 'bookings', 'active' => true],
+    ],
+]);
