@@ -59,98 +59,60 @@
 <form method="post" action="<?= $action ?>" class="admin-form">
     
     <!-- ID (chỉ dùng khi edit) -->
-    <input type="hidden" name="id" value="<?= $booking->id ?? '' ?>">
+    <input type="hidden" name="id" value="<?= $customer->id ?? '' ?>">
 
-    <!-- Chọn Tour -->
     <div class="form-full">
-        <label class="admin-label">Tour</label>
-        <select id="tourSelect" name="tour_id[]" multiple required>
-            <?php 
-            $selectedTours = isset($booking->tour_id) ? explode('|', $booking->tour_id) : [];
-            foreach ($tours as $tourItem): ?>
-                <option value="<?= $tourItem->id ?>" 
-                    <?= in_array($tourItem->id, $selectedTours) ? 'selected' : '' ?> >
-                    <?= htmlspecialchars($tourItem->name) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <label class="admin-label">Tên khách hàng (cá nhân hoặc người đại diện)</label>
+        <input
+            type="text"
+            name="name"
+            value="<?= htmlspecialchars($customer->name ?? '') ?>"
+            class="admin-input"
+            required
+        >
     </div>
 
-    <!-- Chọn Khách hàng -->
-    <div class="form-full">
-        <label class="admin-label">Khách hàng</label>
-        <select name="customers_id" class="admin-select" required>
-            <option value="">-- Chọn khách hàng --</option>
-            <?php foreach ($customers as $customer): ?>
-                <option value="<?= $customer->id ?>"
-                    <?= (isset($booking->customers_id) && $booking->customers_id == $customer->id) ? 'selected' : '' ?> >
-                    <?= htmlspecialchars($customer->name) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-
-    <!-- Chọn Guide (chỉ admin) -->
-    <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== 'huong_dan_vien'): ?>
-        <div class="form-full">
-            <label class="admin-label">Hướng dẫn viên</label>
-            <select name="guide_id" class="admin-select" required>
-                <option value="">-- Chọn hướng dẫn viên --</option>
-                <?php foreach ($guides as $guideItem): ?>
-                    <option value="<?= $guideItem->id ?>"
-                        <?= (isset($booking->guide_id) && $booking->guide_id == $guideItem->id) ? 'selected' : '' ?> >
-                        <?= htmlspecialchars($guideItem->name) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-    <?php endif; ?>
-
-    <!-- Thời gian -->
     <div class="form-grid">
         <div>
-            <label class="admin-label">Ngày bắt đầu</label>
-            <input type="date" name="start_date" value="<?= $booking->start_date ?? '' ?>" class="admin-input" required>
+            <label class="admin-label">Số điện thoại (cá nhân hoặc người đại diện)</label>
+            <input
+                type="tel"
+                name="tel"
+                value="<?= htmlspecialchars($customer->tel ?? '') ?>"
+                class="admin-input"
+                pattern="[0-9]{10,15}"
+                title="Số điện thoại chỉ gồm 10-15 chữ số"
+                required
+            >
         </div>
+
         <div>
-            <label class="admin-label">Ngày kết thúc</label>
-            <input type="date" name="end_date" value="<?= $booking->end_date ?? '' ?>" class="admin-input" required>
+            <label class="admin-label">Email</label>
+            <input
+                type="email"
+                name="email"
+                value="<?= htmlspecialchars($customer->email ?? '') ?>"
+                class="admin-input"
+                required
+            >
         </div>
-    </div>
 
-    <!-- Trạng thái -->
-    <div class="form-full">
-        <label class="admin-label">Trạng thái</label>
-        <select name="status" class="admin-select" required>
-            <option value="0" <?= (isset($booking->status) && $booking->status == 0) ? 'selected' : '' ?>>Đã đặt</option>
-            <option value="1" <?= (isset($booking->status) && $booking->status == 1) ? 'selected' : '' ?>>Đang tiến hành</option>
-            <option value="2" <?= (isset($booking->status) && $booking->status == 2) ? 'selected' : '' ?>>Đã hoàn thành</option>
-            <option value="3" <?= (isset($booking->status) && $booking->status == 3) ? 'selected' : '' ?>>Đã hủy</option>
-        </select>
-    </div>
-
-    <!-- Ghi chú -->
-    <div class="form-full">
-        <label class="admin-label">Ghi chú</label>
-        <textarea name="notes" class="admin-textarea" required><?= htmlspecialchars($booking->notes ?? '') ?></textarea>
+        <!-- Nếu muốn bắt buộc số lượng khách, bỏ comment và thêm required -->
+        <!--
+        <div>
+            <label class="admin-label">Số lượng người (Nếu khách hàng là người đại diện)</label>
+            <input
+                type="number"
+                name="so_luong"
+                min="1"
+                value="<?= htmlspecialchars($customer->so_luong ?? '') ?>"
+                class="admin-input"
+                required
+            >
+        </div>
+        -->
     </div>
 
     <button type="submit" class="admin-button">💾 Lưu</button>
 </form>
 
-<!-- Tom Select CSS -->
-<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
-
-<!-- Tom Select JS -->
-<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        new TomSelect('#tourSelect', {
-            plugins: ['remove_button'], // cho nút xóa từng item
-            placeholder: 'Chọn tour...',
-            maxItems: null, // cho phép chọn nhiều
-            searchField: ['text'] // tìm kiếm theo text
-        });
-    });
-</script>

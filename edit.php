@@ -26,9 +26,9 @@ ob_start();
                     <div class="table-reponsive">
 
 
-                         <!-- <a href="<?= BASE_URL ?>booking-create" class="btn btn-primary">+ Thêm tour</a> -->
+                         <!-- <a href="<?= BASE_URL ?>customer-create" class="btn btn-primary">+ Thêm tour</a> -->
 
-<form method="post" action="<?= BASE_URL ?>booking-update">
+<form method="post" action="<?= BASE_URL ?>customer-update">
     <input type="hidden" name="id" >
     <?php include 'form.php'; ?>
 </form>
