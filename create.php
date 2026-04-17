@@ -26,9 +26,9 @@ ob_start();
                     <div class="table-reponsive">
 
 
-                         <!-- <a href="<?= BASE_URL ?>customer-create" class="btn btn-primary">+ Thêm khách hàng</a> -->
+                         <!-- <a href="<?= BASE_URL ?>booking-create" class="btn btn-primary">+ Thêm khách hàng</a> -->
 
-        <form method="post" action="<?= BASE_URL ?>customer-store">
+        <form method="post" action="<?= BASE_URL ?>user-store">
             <?php include 'form.php'; ?>
         </form>
                               

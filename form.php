@@ -59,60 +59,50 @@
 <form method="post" action="<?= $action ?>" class="admin-form">
     
     <!-- ID (chỉ dùng khi edit) -->
-    <input type="hidden" name="id" value="<?= $customer->id ?? '' ?>">
+    <input type="hidden" name="id" value="<?= $user->id ?? '' ?>">
 
+    <!-- Tên người dùng -->
     <div class="form-full">
-        <label class="admin-label">Tên khách hàng (cá nhân hoặc người đại diện)</label>
-        <input
-            type="text"
-            name="name"
-            value="<?= htmlspecialchars($customer->name ?? '') ?>"
-            class="admin-input"
-            required
-        >
+        <label class="admin-label">Tên người dùng</label>
+        <input type="text" name="name" class="admin-input"
+               value="<?= htmlspecialchars($user->name ?? '') ?>" required>
     </div>
 
-    <div class="form-grid">
-        <div>
-            <label class="admin-label">Số điện thoại (cá nhân hoặc người đại diện)</label>
-            <input
-                type="tel"
-                name="tel"
-                value="<?= htmlspecialchars($customer->tel ?? '') ?>"
-                class="admin-input"
-                pattern="[0-9]{10,15}"
-                title="Số điện thoại chỉ gồm 10-15 chữ số"
-                required
-            >
-        </div>
+    <!-- Email -->
+    <div class="form-full">
+        <label class="admin-label">Email</label>
+        <input type="email" name="email" class="admin-input"
+               value="<?= htmlspecialchars($user->email ?? '') ?>" required>
+    </div>
 
-        <div>
-            <label class="admin-label">Email</label>
-            <input
-                type="email"
-                name="email"
-                value="<?= htmlspecialchars($customer->email ?? '') ?>"
-                class="admin-input"
-                required
-            >
-        </div>
+    <!-- Mật khẩu (chỉ dùng khi thêm mới hoặc đổi) -->
+    <div class="form-full">
+        <label class="admin-label">Mật khẩu</label>
+        <input type="password" name="password" class="admin-input"
+               <?= isset($user) ? '' : 'required' ?>>
+        <?php if(isset($user)): ?>
+            <small>Để trống nếu không muốn thay đổi mật khẩu</small>
+        <?php endif; ?>
+    </div>
 
-        <!-- Nếu muốn bắt buộc số lượng khách, bỏ comment và thêm required -->
-        <!--
-        <div>
-            <label class="admin-label">Số lượng người (Nếu khách hàng là người đại diện)</label>
-            <input
-                type="number"
-                name="so_luong"
-                min="1"
-                value="<?= htmlspecialchars($customer->so_luong ?? '') ?>"
-                class="admin-input"
-                required
-            >
-        </div>
-        -->
+    <!-- Vai trò -->
+    <div class="form-full">
+        <label class="admin-label">Vai trò</label>
+        <select name="role" class="admin-select" required>
+            <option value="admin" <?= (isset($user->role) && $user->role == 'admin') ? 'selected' : '' ?>>Admin</option>
+            <option value="huong_dan_vien" <?= (isset($user->role) && $user->role == 'huong_dan_vien') ? 'selected' : '' ?>>Hướng dẫn viên</option>
+            <option value="user" <?= (isset($user->role) && $user->role == 'user') ? 'selected' : '' ?>>User</option>
+        </select>
+    </div>
+
+    <!-- Trạng thái -->
+    <div class="form-full">
+        <label class="admin-label">Trạng thái</label>
+        <select name="status" class="admin-select" required>
+            <option value="1" <?= (isset($user->status) && $user->status == 1) ? 'selected' : '' ?>>Active</option>
+            <option value="0" <?= (isset($user->status) && $user->status == 0) ? 'selected' : '' ?>>Inactive</option>
+        </select>
     </div>
 
     <button type="submit" class="admin-button">💾 Lưu</button>
 </form>
-
